@@ -19,7 +19,8 @@ import java.util.Map;
  */
 public class NetworkManager {
 
-    public static int REQUEST_TIMEOUT = 15000;
+    public static int REQUEST_TIMEOUT = 30000;
+    public static int REQUEST_READ_TIMEOUT = 30000;
     public static int RETRY_COUNT = 0;
 
 
@@ -77,9 +78,7 @@ public class NetworkManager {
         }
     }
 
-    public void networkMultipartRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, Map<String, String> params, String methord, Map<String, String> dataToSend, Map<String, String> headerParams, String fileName, String filePath, String charSet) throws IOException {
-        Map<String, String> files = new HashMap<>();
-        files.put(fileName, filePath);
+    public void networkMultipartRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, Map<String, String> params, String methord, Map<String, String> dataToSend, Map<String, String> headerParams,  Map<String, String> files, String charSet) throws IOException {
         MultipartNetworkDataObject mNetDataObj = new MultipartNetworkDataObject(urlPath, methord, dataToSend, headerParams, files, charSet);
 
         MultipartRequestAsyncTask mNetworkMultipartRequestAsync = new MultipartRequestAsyncTask(mNetworkManagerInterface);

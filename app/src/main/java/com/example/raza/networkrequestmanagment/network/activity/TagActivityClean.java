@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.raza.networkrequestmanagment.BuildConfig;
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
 import com.example.raza.networkrequestmanagment.R;
 import com.example.raza.networkrequestmanagment.network.constants.NetworkConstants;
@@ -26,7 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TagActivity extends AppCompatActivity {
+public class TagActivityClean extends AppCompatActivity {
 
     private static final String TAG = AppCompatActivity.class.getSimpleName();
 
@@ -34,7 +33,7 @@ public class TagActivity extends AppCompatActivity {
 
     public static String ipAddress = "dev.pmiu.pitb.gov.pk/api";
     private static String baseURL = "http://" + ipAddress + "/";///game-portal/Web-Portal/";
-    public static final String URL_TAG_SCHOOL = baseURL + "save_school_location_data";
+    public static final String URL_CLEAN = "http://cleanlahore.punjab.gov.pk/ajax/create_activity_from_mobile.js";
     public static String filePath;
 
     ImageView imageView;
@@ -152,19 +151,20 @@ public class TagActivity extends AppCompatActivity {
     private void postData() {
 
         Map<String, String> params = new HashMap<>();
-        params.put("school_emis_code", "35210009");
-        params.put("latitude", "31.4758216");
-        params.put("longitude", "74.3422837");
-        params.put("mea_id", "1243");
-        params.put("sec_key", "pitbasdf12345");
-        params.put("source", "gps");
-        params.put("accuracy", "70");
-        params.put("date_time", getCurrentTimeStamp());
-        params.put("app_version", BuildConfig.VERSION_NAME);
+        params.put("categories", "Dump Site");
+        params.put("zone", "");
+        params.put("uc_no", "");
+        params.put("town_name", "");
+        params.put("place", "   ");
+        params.put("gps_location", "23,23");
+        params.put("imei_number", "864390020062790");
+        params.put("description", "");
+        params.put("in_or_out", "");
 
-//        params.put("school_image", new DataPart(filePath, pic1, "image/jpeg"));
+//      params.put("school_image", new DataPart(filePath, pic1, "image/jpeg"));
         Map<String, String> files = new HashMap<>();
-        files.put("school_image", filePath);
+        files.put("before_picture", filePath);
+        files.put("after_picture", filePath);
         try {
             NetworkRequestManagment.mNetManager.networkMultipartRequest(new NetworkManagerInterface() {
                 @Override
@@ -174,11 +174,11 @@ public class TagActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(String networkResponse) {
-//                    Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Failure : " + networkResponse);
 
                 }
-            }, URL_TAG_SCHOOL, params, NetworkConstants.NETWORK_METHORD_POST, params, null, files, "UTF-8");
+            }, URL_CLEAN, params, NetworkConstants.NETWORK_METHORD_POST, params, null, files, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

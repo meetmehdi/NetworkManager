@@ -23,11 +23,12 @@ import java.util.Map;
  * Created by SyedRazaMehdiNaqvi on 8/18/2016.
  */
 public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObject, Void, String> {
+    private static final int HTTP_REQUEST_TIMEOUT = 30000;
 
     private NetworkManagerInterface mNetworkManagerInterface;
-
     private static final String LINE_FEED = "\r\n";
     private HttpURLConnection networkConnection;
+    private boolean requestSuccess = true;
     private OutputStream outputStream;
     private PrintWriter writer;
     private String boundary;
@@ -41,13 +42,13 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        requestSuccess = true;
     }
 
     @Override
     protected String doInBackground(MultipartNetworkDataObject... multipartNetworkDataObjects) {
         String response = "";
         charset = multipartNetworkDataObjects[0].getCharSet();
-
         boundary = "===" + System.currentTimeMillis() + "===";
 
         try {
@@ -55,7 +56,7 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
 
             networkConnection = (HttpURLConnection) url.openConnection();
 
-            networkConnection.setReadTimeout(10000);
+            networkConnection.setReadTimeout(NetworkManager.REQUEST_READ_TIMEOUT);
             networkConnection.setConnectTimeout(NetworkManager.REQUEST_TIMEOUT);
 
             networkConnection.setUseCaches(false);
@@ -86,14 +87,17 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
             response = finish();
 
         } catch (Exception e) {
+            requestSuccess = false;
             response = e.toString();
             e.printStackTrace();
         } finally {
             if (outputStream != null) {
                 try {
-                    outputStream.close();     //Closing the
+                    outputStream.close();
                     writer.close();
                 } catch (IOException e) {
+                    requestSuccess = false;
+                    response = e.toString();
                     e.printStackTrace();
                 }
             }
@@ -103,7 +107,11 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
 
     @Override
     protected void onPostExecute(String s) {
-        mNetworkManagerInterface.onSuccess(s);
+        if (requestSuccess)
+            mNetworkManagerInterface.onSuccess(s);
+        else
+            mNetworkManagerInterface.onFailure(s);
+
         super.onPostExecute(s);
     }
 

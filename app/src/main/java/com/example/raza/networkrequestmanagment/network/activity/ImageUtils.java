@@ -173,6 +173,7 @@ public class ImageUtils {
                     // bitmapPictureTaken = BitmapFactory.decodeFile(picturePath, bitmapFactoryOptions);
                     // Bitmap bitmapResized = Bitmap.createScaledBitmap(bitmapPictureTaken, bitmapPictureTaken.getWidth()/2, bitmapPictureTaken.getHeight()/2, false);
                     TagActivity.filePath = picturePath;
+                    TagActivityClean.filePath = picturePath;
                     bsPicture = getBytes(bitmapResized, picturePath);
                     break;
             }

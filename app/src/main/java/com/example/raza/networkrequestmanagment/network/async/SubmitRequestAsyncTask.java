@@ -21,7 +21,7 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
 
     private NetworkManagerInterface mNetworkManagerInterface;
     private boolean isRequestSucessful = true;
-    HttpURLConnection networkConnection;
+    private HttpURLConnection networkConnection;
     private String response;
 
 
