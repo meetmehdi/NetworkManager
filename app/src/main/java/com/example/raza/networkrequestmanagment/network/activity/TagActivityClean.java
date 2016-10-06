@@ -31,9 +31,9 @@ public class TagActivityClean extends AppCompatActivity {
 
     public static final int REQUEST_CODE_PICTURE_TAKE_IMAGE_CAMERA = 20;
 
-    public static String ipAddress = "dev.pmiu.pitb.gov.pk/api";
-    private static String baseURL = "http://" + ipAddress + "/";///game-portal/Web-Portal/";
-    public static final String URL_CLEAN = "http://cleanlahore.punjab.gov.pk/ajax/create_activity_from_mobile.js";
+    public static String ipAddress = "sample.url";
+    private static String baseURL = "sample.url";
+    public static final String URL_CLEAN = "sample.url";
     public static String filePath;
 
     ImageView imageView;

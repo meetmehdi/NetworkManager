@@ -18,10 +18,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
-    private final String URL_GET_PARAMS = "http://www.gcepapers.com/services/temp.php";
-    private final String URL_GET = "http://www.gcepapers.com/services/GetSubjectsList.php";
-    private final String URL_POST = "http://gcepapers.com/services/GetSubjectData.php";
-    private final String URL_POLICE_EXCISE= "http://www.tenantssurvey.punjab.gov.pk/api/napi/save_plot_data";
+    private final String URL_GET_PARAMS = "sample.url";
+    private final String URL_GET = "sample.url";
+    private final String URL_POST = "sample.url";
+    private final String URL_POLICE_EXCISE= "sample.url";
 
 
     @Override
