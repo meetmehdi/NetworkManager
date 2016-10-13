@@ -1,4 +1,4 @@
-package com.example.raza.networkrequestmanagment.network.activity;
+package com.example.raza.networkrequestmanagment.network.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
+import com.example.raza.networkrequestmanagment.network.activity.TagActivity;
+import com.example.raza.networkrequestmanagment.network.activity.TagActivityClean;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

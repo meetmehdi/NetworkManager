@@ -8,6 +8,8 @@ import com.example.raza.networkrequestmanagment.network.async.MultipartRequestAs
 import com.example.raza.networkrequestmanagment.network.async.SubmitRequestAsyncTask;
 import com.example.raza.networkrequestmanagment.network.dto.MultipartNetworkDataObject;
 import com.example.raza.networkrequestmanagment.network.dto.NetworkDataObject;
+import com.example.raza.networkrequestmanagment.network.dto.RequestParams;
+import com.example.raza.networkrequestmanagment.network.dto.RequestParamsMultipart;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
 
 import java.io.IOException;
@@ -49,13 +51,18 @@ public class NetworkManager {
         return mNetworkManager;
     }
 
-    public void networkSubmitRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, String methord, Map<String, String> dataToSend, Map<String, String> headerParams) throws IOException {
+    public void networkSubmitRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, String methord, Class classOfT, Map<String, String> dataToSend, Map<String, String> headerParams) throws IOException {
         NetworkDataObject mNetDataObj = new NetworkDataObject(urlPath, methord, dataToSend, headerParams);
+        SubmitRequestAsyncTask mNetworkSubmitRequestAsync = new SubmitRequestAsyncTask(mNetworkManagerInterface, classOfT);
+        currentNetworkRequest = mNetworkSubmitRequestAsync;
+        mNetworkSubmitRequestAsync.execute(mNetDataObj);
+    }
 
+    public void networkSubmitRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, String methord, RequestParams dataToSend, RequestParams headerParams) throws IOException {
+        NetworkDataObject mNetDataObj = new NetworkDataObject(urlPath, methord, getAPIParams(dataToSend), getAPIParams(headerParams));
         SubmitRequestAsyncTask mNetworkSubmitRequestAsync = new SubmitRequestAsyncTask(mNetworkManagerInterface);
         currentNetworkRequest = mNetworkSubmitRequestAsync;
         mNetworkSubmitRequestAsync.execute(mNetDataObj);
-
     }
 
     public void cancelNetworkRequest() {
@@ -78,13 +85,41 @@ public class NetworkManager {
         }
     }
 
-    public void networkMultipartRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, Map<String, String> params, String methord, Map<String, String> dataToSend, Map<String, String> headerParams,  Map<String, String> files, String charSet) throws IOException {
-        MultipartNetworkDataObject mNetDataObj = new MultipartNetworkDataObject(urlPath, methord, dataToSend, headerParams, files, charSet);
-
+    public void networkMultipartRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, String methord, RequestParamsMultipart dataToSend, RequestParams headerParams, String charSet) throws IOException {
+        MultipartNetworkDataObject mNetDataObj = new MultipartNetworkDataObject(urlPath, methord, getAPIParams(dataToSend), getAPIParams(headerParams), getAPIFileParams(dataToSend), charSet);
         MultipartRequestAsyncTask mNetworkMultipartRequestAsync = new MultipartRequestAsyncTask(mNetworkManagerInterface);
         currentNetworkRequest = mNetworkMultipartRequestAsync;
         mNetworkMultipartRequestAsync.execute(mNetDataObj);
 
     }
 
+    public Map<String, String> getAPIParams(RequestParams mRequestParams) {
+        HashMap<String, String> mParams = new HashMap<>();
+        if (mRequestParams != null && mRequestParams.getmParameters().size() > 0) {
+            for (int i = 0; i < mRequestParams.getmParameters().size(); i++) {
+                mParams.put(mRequestParams.getmParameters().get(i).getKey(), mRequestParams.getmParameters().get(i).getValue());
+            }
+        }
+        return mParams;
+    }
+
+    public Map<String, String> getAPIParams(RequestParamsMultipart mRequestParams) {
+        HashMap<String, String> mParams = new HashMap<>();
+        if (mRequestParams != null && mRequestParams.getmParameters().size() > 0) {
+            for (int i = 0; i < mRequestParams.getmParameters().size(); i++) {
+                mParams.put(mRequestParams.getmParameters().get(i).getKey(), mRequestParams.getmParameters().get(i).getValue());
+            }
+        }
+        return mParams;
+    }
+
+    public Map<String, String> getAPIFileParams(RequestParamsMultipart mRequestParams) {
+        HashMap<String, String> mParams = new HashMap<>();
+        if (mRequestParams != null && mRequestParams.getmFileParameters().size() > 0) {
+            for (int i = 0; i < mRequestParams.getmFileParameters().size(); i++) {
+                mParams.put(mRequestParams.getmFileParameters().get(i).getKey(), mRequestParams.getmFileParameters().get(i).getPath());
+            }
+        }
+        return mParams;
+    }
 }

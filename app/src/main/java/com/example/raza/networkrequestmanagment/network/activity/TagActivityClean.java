@@ -16,14 +16,16 @@ import android.widget.Toast;
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
 import com.example.raza.networkrequestmanagment.R;
 import com.example.raza.networkrequestmanagment.network.constants.NetworkConstants;
+import com.example.raza.networkrequestmanagment.network.dto.APIFileParameter;
+import com.example.raza.networkrequestmanagment.network.dto.APIParameter;
+import com.example.raza.networkrequestmanagment.network.dto.RequestParamsMultipart;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
+import com.example.raza.networkrequestmanagment.network.utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TagActivityClean extends AppCompatActivity {
 
@@ -31,9 +33,9 @@ public class TagActivityClean extends AppCompatActivity {
 
     public static final int REQUEST_CODE_PICTURE_TAKE_IMAGE_CAMERA = 20;
 
-    public static String ipAddress = "sample.url";
-    private static String baseURL = "sample.url";
-    public static final String URL_CLEAN = "sample.url";
+    public static String ipAddress = "your_own_url";
+    private static String baseURL = "your_own_url";
+    public static final String URL_CLEAN = "your_own_url";
     public static String filePath;
 
     ImageView imageView;
@@ -149,26 +151,41 @@ public class TagActivityClean extends AppCompatActivity {
     }
 
     private void postData() {
+        RequestParamsMultipart mRequestParams = new RequestParamsMultipart();
+        mRequestParams.getmParameters().add(new APIParameter("categories","Dump Site"));
+        mRequestParams.getmParameters().add(new APIParameter("zone",""));
+        mRequestParams.getmParameters().add(new APIParameter("uc_no",""));
+        mRequestParams.getmParameters().add(new APIParameter("town_name",""));
+        mRequestParams.getmParameters().add(new APIParameter("place",""));
+        mRequestParams.getmParameters().add(new APIParameter("gps_location","23,23"));
+        mRequestParams.getmParameters().add(new APIParameter("imei_number","864390020062790"));
+        mRequestParams.getmParameters().add(new APIParameter("description",""));
+        mRequestParams.getmParameters().add(new APIParameter("in_or_out",""));
 
-        Map<String, String> params = new HashMap<>();
-        params.put("categories", "Dump Site");
-        params.put("zone", "");
-        params.put("uc_no", "");
-        params.put("town_name", "");
-        params.put("place", "   ");
-        params.put("gps_location", "23,23");
-        params.put("imei_number", "864390020062790");
-        params.put("description", "");
-        params.put("in_or_out", "");
+//        Map<String, String> params = new HashMap<>();
+//        params.put("categories", "Dump Site");
+//        params.put("zone", "");
+//        params.put("uc_no", "");
+//        params.put("town_name", "");
+//        params.put("place", "   ");
+//        params.put("gps_location", "23,23");
+//        params.put("imei_number", "864390020062790");
+//        params.put("description", "");
+//        params.put("in_or_out", "");
 
 //      params.put("school_image", new DataPart(filePath, pic1, "image/jpeg"));
-        Map<String, String> files = new HashMap<>();
-        files.put("before_picture", filePath);
-        files.put("after_picture", filePath);
+
+//        Map<String, String> files = new HashMap<>();
+//        files.put("before_picture", filePath);
+//        files.put("after_picture", filePath);
+
+        mRequestParams.getmFileParameters().add(new APIFileParameter("before_picture",filePath));
+        mRequestParams.getmFileParameters().add(new APIFileParameter("after_picture",filePath));
+
         try {
             NetworkRequestManagment.mNetManager.networkMultipartRequest(new NetworkManagerInterface() {
                 @Override
-                public void onSuccess(String networkResponse) {
+                public void onSuccess(Object networkResponse) {
                     Toast.makeText(getApplicationContext(), "Success : " + networkResponse, Toast.LENGTH_LONG).show();
                 }
 
@@ -178,7 +195,7 @@ public class TagActivityClean extends AppCompatActivity {
                     Log.e(TAG, "Failure : " + networkResponse);
 
                 }
-            }, URL_CLEAN, params, NetworkConstants.NETWORK_METHORD_POST, params, null, files, "UTF-8");
+            }, URL_CLEAN, NetworkConstants.NETWORK_METHORD_POST, mRequestParams, null, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

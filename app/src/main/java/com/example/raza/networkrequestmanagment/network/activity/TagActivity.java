@@ -17,14 +17,16 @@ import com.example.raza.networkrequestmanagment.BuildConfig;
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
 import com.example.raza.networkrequestmanagment.R;
 import com.example.raza.networkrequestmanagment.network.constants.NetworkConstants;
+import com.example.raza.networkrequestmanagment.network.dto.APIFileParameter;
+import com.example.raza.networkrequestmanagment.network.dto.APIParameter;
+import com.example.raza.networkrequestmanagment.network.dto.RequestParamsMultipart;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
+import com.example.raza.networkrequestmanagment.network.utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TagActivity extends AppCompatActivity {
 
@@ -32,9 +34,9 @@ public class TagActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_PICTURE_TAKE_IMAGE_CAMERA = 20;
 
-    public static String ipAddress = "dev.pmiu.pitb.gov.pk/api";
-    private static String baseURL = "http://" + ipAddress + "/";///game-portal/Web-Portal/";
-    public static final String URL_TAG_SCHOOL = baseURL + "save_school_location_data";
+    public static String ipAddress = "your_own_url";
+    private static String baseURL = "your_own_url";
+    public static final String URL_TAG_SCHOOL = baseURL + "your_own_url";
     public static String filePath;
 
     ImageView imageView;
@@ -150,35 +152,48 @@ public class TagActivity extends AppCompatActivity {
     }
 
     private void postData() {
+        RequestParamsMultipart mRequestParams = new RequestParamsMultipart();
+        mRequestParams.getmParameters().add(new APIParameter("school_emis_code","35210009"));
+        mRequestParams.getmParameters().add(new APIParameter("latitude","31.4758216"));
+        mRequestParams.getmParameters().add(new APIParameter("longitude","74.3422837"));
+        mRequestParams.getmParameters().add(new APIParameter("mea_id","1243"));
+        mRequestParams.getmParameters().add(new APIParameter("sec_key","pitbasdf12345"));
+        mRequestParams.getmParameters().add(new APIParameter("source","gps"));
+        mRequestParams.getmParameters().add(new APIParameter("accuracy","70"));
+        mRequestParams.getmParameters().add(new APIParameter("date_time",getCurrentTimeStamp()));
+        mRequestParams.getmParameters().add(new APIParameter("app_version",BuildConfig.VERSION_NAME));
 
-        Map<String, String> params = new HashMap<>();
-        params.put("school_emis_code", "35210009");
-        params.put("latitude", "31.4758216");
-        params.put("longitude", "74.3422837");
-        params.put("mea_id", "1243");
-        params.put("sec_key", "pitbasdf12345");
-        params.put("source", "gps");
-        params.put("accuracy", "70");
-        params.put("date_time", getCurrentTimeStamp());
-        params.put("app_version", BuildConfig.VERSION_NAME);
+//        Map<String, String> params = new HashMap<>();
+//        params.put("school_emis_code", "35210009");
+//        params.put("latitude", "31.4758216");
+//        params.put("longitude", "74.3422837");
+//        params.put("mea_id", "1243");
+//        params.put("sec_key", "pitbasdf12345");
+//        params.put("source", "gps");
+//        params.put("accuracy", "70");
+//        params.put("date_time", getCurrentTimeStamp());
+//        params.put("app_version", BuildConfig.VERSION_NAME);
 
 //        params.put("school_image", new DataPart(filePath, pic1, "image/jpeg"));
-        Map<String, String> files = new HashMap<>();
-        files.put("school_image", filePath);
+//        Map<String, String> files = new HashMap<>();
+//        files.put("school_image", filePath);
+
+        mRequestParams.getmFileParameters().add(new APIFileParameter("school_image",filePath));
+
         try {
             NetworkRequestManagment.mNetManager.networkMultipartRequest(new NetworkManagerInterface() {
                 @Override
-                public void onSuccess(String networkResponse) {
+                public void onSuccess(Object networkResponse) {
                     Toast.makeText(getApplicationContext(), "Success : " + networkResponse, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void onFailure(String networkResponse) {
-//                    Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
+//                  Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Failure : " + networkResponse);
 
                 }
-            }, URL_TAG_SCHOOL, params, NetworkConstants.NETWORK_METHORD_POST, params, null, files, "UTF-8");
+            }, URL_TAG_SCHOOL, NetworkConstants.NETWORK_METHORD_POST, mRequestParams, null, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

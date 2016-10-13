@@ -3,9 +3,11 @@ package com.example.raza.networkrequestmanagment.network.async;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.raza.networkrequestmanagment.network.constants.NetworkConstants;
 import com.example.raza.networkrequestmanagment.network.dto.NetworkDataObject;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
 import com.example.raza.networkrequestmanagment.network.utils.NetworkUtils;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,10 +22,16 @@ import java.net.URL;
 public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, String> {
 
     private NetworkManagerInterface mNetworkManagerInterface;
-    private boolean isRequestSucessful = true;
     private HttpURLConnection networkConnection;
+    private boolean isRequestSucessful = true;
+    private Class mClassObjectT;
     private String response;
 
+
+    public SubmitRequestAsyncTask(NetworkManagerInterface mNetworkManagerInterface, Class classOfT) {
+        this.mNetworkManagerInterface = mNetworkManagerInterface;
+        this.mClassObjectT = classOfT;
+    }
 
     public SubmitRequestAsyncTask(NetworkManagerInterface mNetworkManagerInterface) {
         this.mNetworkManagerInterface = mNetworkManagerInterface;
@@ -32,6 +40,7 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        isRequestSucessful = true;
     }
 
     @Override
@@ -51,6 +60,7 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
 
             // Network Method e.g POST
             networkConnection.setRequestMethod(networkDataObjects[0].getNetworkMethord());
+//            networkConnection.setDoOutput(false);
 
             // set header
             if (networkDataObjects[0].getHeaderParams() != null)
@@ -58,13 +68,19 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
 
             //To enable inputting values using POST method
             //(Basically, after this we can write the dataToSend to the body of POST method)
-            networkConnection.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(networkConnection.getOutputStream());
-            //Writing dataToSend to outputstreamwriter
-            writer.write(encodedStr);
-            //Sending the data to the server - This much is enough to send data to server
-            //But to read the response of the server, you will have to implement the procedure below
-            writer.flush();
+            if (networkDataObjects[0].getNetworkMethord().equalsIgnoreCase(NetworkConstants.NETWORK_METHORD_GET))
+                networkConnection.setDoOutput(false);
+            else
+                networkConnection.setDoOutput(true);
+
+            if (encodedStr != null && !encodedStr.isEmpty()) {
+                OutputStreamWriter writer = new OutputStreamWriter(networkConnection.getOutputStream());
+                //Writing dataToSend to outputstreamwriter
+                writer.write(encodedStr);
+                //Sending the data to the server - This much is enough to send data to server
+                //But to read the response of the server, you will have to implement the procedure below
+                writer.flush();
+            }
 
             //Data Read Procedure - Basically reading the data comming line by line
             StringBuilder sb = new StringBuilder();
@@ -84,7 +100,6 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
             response = e.toString();
             e.printStackTrace();
         } finally {
-            isRequestSucessful = true;
             if (reader != null) {
                 try {
                     reader.close();     //Closing the
@@ -103,10 +118,18 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if (isRequestSucessful)
-            mNetworkManagerInterface.onSuccess(s);
-        else
+        if (isRequestSucessful) {
+            try {
+                if (mClassObjectT != null)
+                    mNetworkManagerInterface.onSuccess(new Gson().fromJson(s, mClassObjectT));
+                else
+                    mNetworkManagerInterface.onSuccess(s);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
             mNetworkManagerInterface.onFailure(s);
+        }
     }
 
     public void closeHttpURLConnection() {

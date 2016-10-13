@@ -2,6 +2,8 @@ package com.example.raza.networkrequestmanagment.network.utils;
 
 import android.util.Log;
 
+import com.example.raza.networkrequestmanagment.network.dto.RequestParams;
+
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -41,15 +43,13 @@ public class NetworkUtils {
         }
     }
 
-    public static String getGetURL(String baseURL, Map<String, String> params) {
-        boolean appendingFirstParam = true;
+    public static String getGetURL(String baseURL, RequestParams params) {
         String url = baseURL;
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (appendingFirstParam) {
-                appendingFirstParam = false;
-                url = url + "?" + entry.getKey() + "=" + entry.getValue();
+        for (int i = 0; i < params.getmParameters().size(); i++) {
+            if (i == 0) {
+                url = url + "?" + params.getmParameters().get(i).getKey() + "=" + params.getmParameters().get(i).getValue();
             } else {
-                url = url + "&" + entry.getKey() + "=" + entry.getValue();
+                url = url + "&" + params.getmParameters().get(i).getKey() + "=" + params.getmParameters().get(i).getValue();
             }
         }
         Log.i(TAG, url);

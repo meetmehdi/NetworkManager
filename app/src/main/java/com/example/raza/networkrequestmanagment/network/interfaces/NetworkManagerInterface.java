@@ -5,7 +5,7 @@ package com.example.raza.networkrequestmanagment.network.interfaces;
  */
 public interface NetworkManagerInterface {
 
-    void onSuccess(String networkResponse);
+    void onSuccess(Object networkResponse);
 
     void onFailure(String networkResponse);
 
