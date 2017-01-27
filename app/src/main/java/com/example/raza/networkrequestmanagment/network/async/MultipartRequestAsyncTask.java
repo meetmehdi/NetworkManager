@@ -21,8 +21,10 @@ import java.util.Map;
 
 /**
  * Created by SyedRazaMehdiNaqvi on 8/18/2016.
+ * Edited by MuzammilSaeed on 01/26/2017
  */
-public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObject, Void, String> {
+public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObject, Void, MultipartRequestAsyncTask.ResponseObject>
+{
     private static final int HTTP_REQUEST_TIMEOUT = 30000;
 
     private NetworkManagerInterface mNetworkManagerInterface;
@@ -34,6 +36,17 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
     private String boundary;
     private String charset;
 
+    public class ResponseObject
+    {
+        int responseCode;
+        String responseMessage;
+
+        public ResponseObject(int code, String response)
+        {
+            this.responseCode = code;
+            this.responseMessage = response;
+        }
+    };
 
     public MultipartRequestAsyncTask(NetworkManagerInterface mNetworkManagerInterface) {
         this.mNetworkManagerInterface = mNetworkManagerInterface;
@@ -46,10 +59,12 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
     }
 
     @Override
-    protected String doInBackground(MultipartNetworkDataObject... multipartNetworkDataObjects) {
+    protected ResponseObject doInBackground(MultipartNetworkDataObject... multipartNetworkDataObjects) {
         String response = "";
         charset = multipartNetworkDataObjects[0].getCharSet();
         boundary = "===" + System.currentTimeMillis() + "===";
+
+        int responseCode = -1;
 
         try {
             URL url = new URL(multipartNetworkDataObjects[0].getUrl());
@@ -102,17 +117,17 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
                 }
             }
         }
-        return response;
+        return new ResponseObject(responseCode, response);
     }
 
     @Override
-    protected void onPostExecute(String s) {
+    protected void onPostExecute(ResponseObject ro) {
         if (requestSuccess)
-            mNetworkManagerInterface.onSuccess(s);
+            mNetworkManagerInterface.onSuccess(ro.responseCode, ro.responseMessage);
         else
-            mNetworkManagerInterface.onFailure(s);
+            mNetworkManagerInterface.onFailure(ro.responseCode, ro.responseMessage);
 
-        super.onPostExecute(s);
+        super.onPostExecute(ro);
     }
 
 

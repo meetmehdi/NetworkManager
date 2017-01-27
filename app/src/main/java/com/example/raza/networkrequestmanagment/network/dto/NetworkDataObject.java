@@ -1,14 +1,18 @@
 package com.example.raza.networkrequestmanagment.network.dto;
 
+import com.example.raza.networkrequestmanagment.network.config.NetworkConfig;
+
 import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by SyedRazaMehdiNaqvi on 8/17/2016.
+ * * Edited by MuzammilSaeed on 01/26/2017
  */
-public class NetworkDataObject implements Serializable {
-
+public class NetworkDataObject implements Serializable
+{
     private String url;
+    private NetworkConfig networkConfig;
     private String networkMethord;
     private Map<String, String> dataToSend;
     private Map<String, String> headerParams;
@@ -26,12 +30,30 @@ public class NetworkDataObject implements Serializable {
         this.headerParams = headerParams;
     }
 
+    public NetworkDataObject(String url, NetworkConfig networkConfig, String networkMethord, Map<String, String> dataToSend, Map<String, String> headerParams)
+    {
+        this.url = url;
+        this.networkConfig = networkConfig;
+        this.networkMethord = networkMethord;
+        this.dataToSend = dataToSend;
+        this.headerParams = headerParams;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+
+    public NetworkConfig getNetworkConfig() {
+        return networkConfig;
+    }
+
+    public void setNetworkConfig(NetworkConfig networkConfig) {
+        this.networkConfig = networkConfig;
     }
 
     public String getNetworkMethord() {

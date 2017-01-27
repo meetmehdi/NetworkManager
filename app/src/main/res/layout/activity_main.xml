@@ -9,8 +9,51 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".network.activity.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow>
+            <Button
+                android:id="@+id/btnTestGetReq"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Test Get"
+                android:onClick="OnClick_TestGet"/>
+            <Button
+                android:id="@+id/btnTestGetReqWithParams"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Get With Params"
+                android:onClick="OnClick_TestGetWithParams"/>
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/btnTestPostReq"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Test Post"
+                android:onClick="OnClick_TestPost"/>
+            <Button
+                android:id="@+id/btnTestPostReqParams"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Post With Params"
+                android:onClick="OnClick_TestPostWithParams"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello World!"
+                android:maxLines="23"
+                android:scrollbars="vertical"/>
+        </TableRow>
+
+    </TableLayout>
+
 </RelativeLayout>

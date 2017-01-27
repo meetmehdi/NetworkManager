@@ -168,12 +168,12 @@ public class TagActivityClean extends AppCompatActivity {
         try {
             NetworkRequestManagment.mNetManager.networkMultipartRequest(new NetworkManagerInterface() {
                 @Override
-                public void onSuccess(String networkResponse) {
+                public void onSuccess(int responseCode, String networkResponse) {
                     Toast.makeText(getApplicationContext(), "Success : " + networkResponse, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
-                public void onFailure(String networkResponse) {
+                public void onFailure(int responseCode, String networkResponse) {
                     Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Failure : " + networkResponse);
 
