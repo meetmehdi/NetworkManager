@@ -35,6 +35,23 @@ public class NetworkUtils {
         return sb.toString();
     }
 
+    public static String getEncodedData(String data)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        if (data == null)
+            return sb.toString();
+
+        String value = null;
+        try {
+            value = URLEncoder.encode(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
     public static void setRequestHeader(HttpURLConnection mURLConnection, Map<String, String> headerParam) {
         for (Map.Entry<String, String> entry : headerParam.entrySet()) {
             mURLConnection.setRequestProperty(entry.getKey(), entry.getValue());

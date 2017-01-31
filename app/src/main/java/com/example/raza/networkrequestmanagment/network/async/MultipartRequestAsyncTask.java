@@ -3,6 +3,8 @@ package com.example.raza.networkrequestmanagment.network.async;
 import android.os.AsyncTask;
 
 import com.example.raza.networkrequestmanagment.network.NetworkManager;
+import com.example.raza.networkrequestmanagment.network.constants.HttpResponseCode;
+import com.example.raza.networkrequestmanagment.network.constants.NetworkResponseCodes;
 import com.example.raza.networkrequestmanagment.network.dto.MultipartNetworkDataObject;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
 
@@ -121,11 +123,14 @@ public class MultipartRequestAsyncTask extends AsyncTask<MultipartNetworkDataObj
     }
 
     @Override
-    protected void onPostExecute(ResponseObject ro) {
+    protected void onPostExecute(ResponseObject ro)
+    {
+        HttpResponseCode code = NetworkResponseCodes.GetHttpResponse(ro.responseCode);
+
         if (requestSuccess)
-            mNetworkManagerInterface.onSuccess(ro.responseCode, ro.responseMessage);
+            mNetworkManagerInterface.onSuccess(code, ro.responseMessage);
         else
-            mNetworkManagerInterface.onFailure(ro.responseCode, ro.responseMessage);
+            mNetworkManagerInterface.onFailure(code, ro.responseMessage);
 
         super.onPostExecute(ro);
     }

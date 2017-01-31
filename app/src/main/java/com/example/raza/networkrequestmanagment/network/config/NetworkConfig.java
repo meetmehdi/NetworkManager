@@ -6,9 +6,12 @@ package com.example.raza.networkrequestmanagment.network.config;
 
 public class NetworkConfig
 {
-    private int timeout = 5000;
+    private int timeout = 30000;
     private int retryCount = 3;
-    private int backoff_mult;
+
+    // determine exponential time set to socket for every retry attempt
+    // timeout = timeout + (timeout x Back Off Multiplier);
+    private int backOffMulti = 1;
 
     public int getRetryCount() {
         return retryCount;

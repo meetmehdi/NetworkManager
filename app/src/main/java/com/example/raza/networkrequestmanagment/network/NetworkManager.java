@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.raza.networkrequestmanagment.network.async.MultipartRequestAsyncTask;
 import com.example.raza.networkrequestmanagment.network.async.SubmitRequestAsyncTask;
 import com.example.raza.networkrequestmanagment.network.config.NetworkConfig;
+import com.example.raza.networkrequestmanagment.network.constants.NetworkHttpMethods;
 import com.example.raza.networkrequestmanagment.network.dto.MultipartNetworkDataObject;
 import com.example.raza.networkrequestmanagment.network.dto.NetworkDataObject;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
@@ -70,9 +71,18 @@ public class NetworkManager
         return mNetworkManager;
     }
 
-    public void networkSubmitRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, String methord, Map<String, String> dataToSend, Map<String, String> headerParams) throws IOException
+    public void networkSubmitRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, NetworkHttpMethods method, Map<String, String> dataToSend, Map<String, String> headerParams) throws IOException
     {
-        NetworkDataObject mNetDataObj = new NetworkDataObject(urlPath, this.NETWORK_CONFIG, methord, dataToSend, headerParams);
+        NetworkDataObject mNetDataObj = new NetworkDataObject(urlPath, this.NETWORK_CONFIG, method, dataToSend, headerParams);
+
+        SubmitRequestAsyncTask mNetworkSubmitRequestAsync = new SubmitRequestAsyncTask(mNetworkManagerInterface);
+        currentNetworkRequest = mNetworkSubmitRequestAsync;
+        mNetworkSubmitRequestAsync.execute(mNetDataObj);
+    }
+
+    public void SubmitNetworkRequest(NetworkManagerInterface mNetworkManagerInterface, String urlPath, NetworkHttpMethods method, String dataToSendRaw, Map<String, String> headerParams) throws IOException
+    {
+        NetworkDataObject mNetDataObj = new NetworkDataObject(urlPath, this.NETWORK_CONFIG, method, dataToSendRaw, headerParams);
 
         SubmitRequestAsyncTask mNetworkSubmitRequestAsync = new SubmitRequestAsyncTask(mNetworkManagerInterface);
         currentNetworkRequest = mNetworkSubmitRequestAsync;

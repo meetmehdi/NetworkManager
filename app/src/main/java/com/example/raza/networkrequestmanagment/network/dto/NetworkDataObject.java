@@ -1,6 +1,9 @@
 package com.example.raza.networkrequestmanagment.network.dto;
 
+import android.net.Network;
+
 import com.example.raza.networkrequestmanagment.network.config.NetworkConfig;
+import com.example.raza.networkrequestmanagment.network.constants.NetworkHttpMethods;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -13,29 +16,39 @@ public class NetworkDataObject implements Serializable
 {
     private String url;
     private NetworkConfig networkConfig;
-    private String networkMethord;
+    private NetworkHttpMethods networkMethod;
+    private String dataToSendRaw;
     private Map<String, String> dataToSend;
     private Map<String, String> headerParams;
 
-    public NetworkDataObject(String url, String networkMethord, Map<String, String> dataToSend) {
+    public NetworkDataObject(String url, NetworkHttpMethods networkMethord, Map<String, String> dataToSend) {
         this.url = url;
-        this.networkMethord = networkMethord;
+        this.networkMethod = networkMethord;
         this.dataToSend = dataToSend;
     }
 
-    public NetworkDataObject(String url, String networkMethord, Map<String, String> dataToSend, Map<String, String> headerParams) {
+    public NetworkDataObject(String url, NetworkHttpMethods networkMethord, Map<String, String> dataToSend, Map<String, String> headerParams) {
         this.url = url;
-        this.networkMethord = networkMethord;
+        this.networkMethod = networkMethord;
         this.dataToSend = dataToSend;
         this.headerParams = headerParams;
     }
 
-    public NetworkDataObject(String url, NetworkConfig networkConfig, String networkMethord, Map<String, String> dataToSend, Map<String, String> headerParams)
+    public NetworkDataObject(String url, NetworkConfig networkConfig, NetworkHttpMethods networkMethord, Map<String, String> dataToSend, Map<String, String> headerParams)
     {
         this.url = url;
         this.networkConfig = networkConfig;
-        this.networkMethord = networkMethord;
+        this.networkMethod = networkMethord;
         this.dataToSend = dataToSend;
+        this.headerParams = headerParams;
+    }
+
+    public NetworkDataObject(String url, NetworkConfig networkConfig, NetworkHttpMethods networkMethod, String dataToSendRaw, Map<String, String> headerParams)
+    {
+        this.url = url;
+        this.networkConfig = networkConfig;
+        this.networkMethod = networkMethod;
+        this.dataToSendRaw = dataToSendRaw;
         this.headerParams = headerParams;
     }
 
@@ -56,12 +69,12 @@ public class NetworkDataObject implements Serializable
         this.networkConfig = networkConfig;
     }
 
-    public String getNetworkMethord() {
-        return networkMethord;
+    public NetworkHttpMethods getNetworkMethord() {
+        return networkMethod;
     }
 
-    public void setNetworkMethord(String networkMethord) {
-        this.networkMethord = networkMethord;
+    public void setNetworkMethord(NetworkHttpMethods networkMethod) {
+        this.networkMethod = networkMethod;
     }
 
     public Map<String, String> getDataToSend() {
@@ -70,6 +83,14 @@ public class NetworkDataObject implements Serializable
 
     public void setDataToSend(Map<String, String> dataToSend) {
         this.dataToSend = dataToSend;
+    }
+
+    public String getDataToSendRaw() {
+        return dataToSendRaw;
+    }
+
+    public void setDataToSendRaw(String dataToSend) {
+        this.dataToSendRaw = dataToSend;
     }
 
     public Map<String, String> getHeaderParams() {

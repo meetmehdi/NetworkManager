@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.raza.networkrequestmanagment.BuildConfig;
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
 import com.example.raza.networkrequestmanagment.R;
+import com.example.raza.networkrequestmanagment.network.constants.HttpResponseCode;
 import com.example.raza.networkrequestmanagment.network.constants.NetworkConstants;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
 
@@ -168,12 +169,12 @@ public class TagActivity extends AppCompatActivity {
         try {
             NetworkRequestManagment.mNetManager.networkMultipartRequest(new NetworkManagerInterface() {
                 @Override
-                public void onSuccess(int responseCode, String networkResponse) {
+                public void onSuccess(HttpResponseCode httpCode, String networkResponse) {
                     Toast.makeText(getApplicationContext(), "Success : " + networkResponse, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
-                public void onFailure(int responseCode, String networkResponse) {
+                public void onFailure(HttpResponseCode httpCode, String networkResponse) {
 //                    Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Failure : " + networkResponse);
 

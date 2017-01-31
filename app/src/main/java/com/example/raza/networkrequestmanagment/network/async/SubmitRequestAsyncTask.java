@@ -1,9 +1,13 @@
 package com.example.raza.networkrequestmanagment.network.async;
 
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
 import com.example.raza.networkrequestmanagment.network.config.NetworkConfig;
+import com.example.raza.networkrequestmanagment.network.constants.HttpResponseCode;
+import com.example.raza.networkrequestmanagment.network.constants.NetworkHttpMethods;
+import com.example.raza.networkrequestmanagment.network.constants.NetworkResponseCodes;
 import com.example.raza.networkrequestmanagment.network.dto.NetworkDataObject;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
 import com.example.raza.networkrequestmanagment.network.utils.NetworkUtils;
@@ -13,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Map;
 
@@ -54,8 +60,18 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
     {
         int responseCode = -1;
 
-        //Encoded String - we will have to encode string by our custom method (Very easy)
-        encodedStr = NetworkUtils.getEncodedData(networkDataObjects[0].getDataToSend());
+        if(networkDataObjects[0].getNetworkMethord() == NetworkHttpMethods.POST)
+        {
+            //Encoded String - we will have to encode string by our custom method (Very easy)
+
+            Map<String, String> headerParams = networkDataObjects[0].getHeaderParams();
+            int headerParamsSize = headerParams.size();
+
+            if ( headerParams != null && headerParamsSize > 0)
+                encodedStr = NetworkUtils.getEncodedData(networkDataObjects[0].getDataToSendRaw()); // encode Map<>
+            else if ( headerParams != null && headerParamsSize <= 0)
+                encodedStr = NetworkUtils.getEncodedData(networkDataObjects[0].getDataToSend()); // encode String
+        }
 
         //Will be used if we want to read some data from server
         BufferedReader reader = null;
@@ -66,22 +82,12 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
             //Converting address String to URL
             URL url = new URL(networkDataObjects[0].getUrl());
 
-//            //Opening the connection (Not setting or using CONNECTION_TIMEOUT)
-//            networkConnection = (HttpURLConnection) url.openConnection();
-//
-//            // Network Method e.g POST
-//            networkConnection.setRequestMethod(networkDataObjects[0].getNetworkMethord());
-//
-//            // Network Timeout e.g 5000 milliseconds
-//            networkConnection.setConnectTimeout(networkDataObjects[0].getTimeout());
-//
-//            responseCode = networkConnection.getResponseCode();
-
             networkConnection = MakeRequest(
                     url,
                     networkDataObjects[0].getNetworkMethord(),
                     networkDataObjects[0].getHeaderParams(),
-                    networkDataObjects[0].getNetworkConfig());
+                    networkDataObjects[0].getNetworkConfig(),
+                    1);
 
             // something went wrong....it has nothing to do with our code (e.g. INTERNET is down)
             if(networkConnection == null)
@@ -130,91 +136,98 @@ public class SubmitRequestAsyncTask extends AsyncTask<NetworkDataObject, Void, S
         return new ResponseObject(responseCode, response);
     }
 
-    private HttpURLConnection MakeRequest(URL url, String method, Map<String, String> headerParams, NetworkConfig config)
+    private String getNetworkMethodMapped(NetworkHttpMethods method)
     {
+        switch (method)
+        {
+            case GET:
+                return "GET";
+            case POST:
+                return "POST";
+            case HEAD:
+                return "HEAD";
+            case PUT:
+                return "PUT";
+            case DELETE:
+                return "DELETE";
+            case OPTIONS:
+                return "OPTIONS";
+            case CONNECT:
+                return "CONNECT";
+            case PATCH:
+                return "PATCH";
+        }
 
-        HttpURLConnection htp_url_connection = null;
-        int count = 1;
-        int retry_count = config.getTimeout();
+        return "UNKNOWN";
+    }
+
+    private HttpURLConnection MakeRequest(
+            URL url,
+            NetworkHttpMethods method,
+            Map<String, String> headerParams,
+            NetworkConfig config,
+            int currentRetryIndex)
+    {
+        HttpURLConnection httpURLConnection = null;
+        int requestRetryCount = config.getRetryCount();
 
         try
         {
-            //Opening the connection (Not setting or using CONNECTION_TIMEOUT)
-            htp_url_connection = (HttpURLConnection) url.openConnection();
-
-            // Network Method e.g POST
-            htp_url_connection.setRequestMethod(method);
-
-            if (headerParams != null && method.trim().toLowerCase().equals("post"))
+            // mCurrentRetryCount is static
+            if(currentRetryIndex <= requestRetryCount)
             {
-                htp_url_connection.setDoOutput(true);
-                NetworkUtils.setRequestHeader(htp_url_connection, headerParams);
+                //Opening the connection (Not setting or using CONNECTION_TIMEOUT)
+                httpURLConnection = (HttpURLConnection) url.openConnection();
 
-                // We are gonna write "dataToSend" to the body of POST request, using POST method
-                if(encodedStr.trim().length() > 0)
+                // Network Method e.g POST
+                httpURLConnection.setRequestMethod(getNetworkMethodMapped(method));
+
+                if (headerParams != null && (method == NetworkHttpMethods.POST))
                 {
-                    OutputStreamWriter writer = new OutputStreamWriter(htp_url_connection.getOutputStream());
-                    writer.write(encodedStr);
-                    writer.flush();
-                }
-            }
+                    httpURLConnection.setDoOutput(true);
+                    NetworkUtils.setRequestHeader(httpURLConnection, headerParams);
 
-            // Network Timeout e.g 5000 milliseconds
-            htp_url_connection.setConnectTimeout(config.getTimeout());
-
-            // Get response code (against whatever request was made e.g GET/POST)
-            int responseCode = htp_url_connection.getResponseCode();
-
-            if(responseCode == 200)
-                return htp_url_connection;
-
-            // our request was not successfull.... try again "retry_count" times
-            while(count < retry_count)
-            {
-                count++;
-
-                htp_url_connection = (HttpURLConnection) url.openConnection();
-                htp_url_connection.setRequestMethod(method);
-
-                if (headerParams != null && method.trim().toLowerCase().equals("post"))
-                {
-                    htp_url_connection.setDoOutput(true);
-                    NetworkUtils.setRequestHeader(htp_url_connection, headerParams);
-                    if(encodedStr.trim().length() > 0)
-                    {
-                        OutputStreamWriter writer = new OutputStreamWriter(htp_url_connection.getOutputStream());
+                    if (encodedStr.trim().length() > 0) {
+                        OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
                         writer.write(encodedStr);
                         writer.flush();
                     }
                 }
 
-                htp_url_connection.setConnectTimeout(config.getTimeout());
-                responseCode = htp_url_connection.getResponseCode();
+                // Network Timeout e.g 5000 milliseconds
+                httpURLConnection.setConnectTimeout(config.getTimeout());
 
-                if(responseCode == 200)
-                    return htp_url_connection;
+                // Get response code (against whatever request was made e.g GET/POST)
+                int responseCode = httpURLConnection.getResponseCode();
+                String respMessage = httpURLConnection.getResponseMessage();
+
+                if (responseCode == HttpURLConnection.HTTP_OK /*200*/)
+                    return httpURLConnection;
             }
+        }
+        catch (SocketTimeoutException ste)
+        {
+            MakeRequest(url, method, headerParams, config, ++currentRetryIndex);
         }
         catch (Exception ex)
         {
-            String str = ex.getMessage();
-            String str2 = ex.toString();
-
-            int a = 10;
-            int b = 25;
-            int rsult = a + b;
+            MakeRequest(url, method, headerParams, config, ++currentRetryIndex);
         }
 
-        return htp_url_connection;
+        return httpURLConnection;
     }
 
     @Override
-    protected void onPostExecute(ResponseObject ro) {
+    protected void onPostExecute(ResponseObject ro)
+    {
         super.onPostExecute(ro);
+
+        HttpResponseCode code = NetworkResponseCodes.GetHttpResponse(ro.responseCode);
+
         if (isRequestSucessful)
-            mNetworkManagerInterface.onSuccess(ro.responseCode, ro.responseMessage);
+            mNetworkManagerInterface.onSuccess(code, ro.responseMessage);
         else
-            mNetworkManagerInterface.onFailure(ro.responseCode, ro.responseMessage);
+            mNetworkManagerInterface.onFailure(code, ro.responseMessage);
     }
 
     public void closeHttpURLConnection() {

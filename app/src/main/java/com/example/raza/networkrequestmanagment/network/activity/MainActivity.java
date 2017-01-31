@@ -13,7 +13,9 @@ import android.widget.Toast;
 
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
 import com.example.raza.networkrequestmanagment.R;
+import com.example.raza.networkrequestmanagment.network.constants.HttpResponseCode;
 import com.example.raza.networkrequestmanagment.network.constants.NetworkConstants;
+import com.example.raza.networkrequestmanagment.network.constants.NetworkHttpMethods;
 import com.example.raza.networkrequestmanagment.network.interfaces.NetworkManagerInterface;
 import com.example.raza.networkrequestmanagment.network.utils.NetworkUtils;
 
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity
             NetworkManagerInterface networkManagerInterface = new NetworkManagerInterface()
             {
                 @Override
-                public void onSuccess(int responseCode, String networkResponse)
+                public void onSuccess(HttpResponseCode httpCode, String networkResponse)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("========= Time =========");
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity
                     stringBuilder.append("\n");
                     stringBuilder.append("========= Response =========");
                     stringBuilder.append("\n");
-                    stringBuilder.append("Response Code:\t\t" + responseCode);
+                    stringBuilder.append("Response Code:\t\t" + httpCode);
                     stringBuilder.append("\n");
                     stringBuilder.append("Response:\t\t" + networkResponse);
 
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 @Override
-                public void onFailure(int responseCode, String networkResponse)
+                public void onFailure(HttpResponseCode httpCode, String networkResponse)
                 {
                     Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.i(TAG + "<Failure>", "<Failure>" + networkResponse);
@@ -101,8 +103,7 @@ public class MainActivity extends AppCompatActivity
                 (
                     networkManagerInterface,
                     URL_GET,
-                    /*URL_GET_TIMEZONES ,*/
-                    NetworkConstants.NETWORK_METHORD_GET,
+                        NetworkHttpMethods.GET,
                     null,
                     null
                 );
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity
             NetworkManagerInterface networkManagerInterface = new NetworkManagerInterface()
             {
                 @Override
-                public void onSuccess(int responseCode, String networkResponse)
+                public void onSuccess(HttpResponseCode httpCode, String networkResponse)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("========= Time =========");
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity
                     stringBuilder.append("\n");
                     stringBuilder.append("========= Response =========");
                     stringBuilder.append("\n");
-                    stringBuilder.append("Response Code:\t\t" + responseCode);
+                    stringBuilder.append("Response Code:\t\t" + httpCode);
                     stringBuilder.append("\n");
                     stringBuilder.append("Response:\t\t" + networkResponse);
 
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 @Override
-                public void onFailure(int responseCode, String networkResponse) {
+                public void onFailure(HttpResponseCode httpCode, String networkResponse) {
                     Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.i(TAG + "<Failure>", "<Failure>" + networkResponse);
                 }
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity
                 (
                     networkManagerInterface,
                     NetworkUtils.getGetURL(URL_GET_PARAMS, params),
-                    NetworkConstants.NETWORK_METHORD_GET,
+                    NetworkHttpMethods.GET,
                     null,
                     params
                 );
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity
             NetworkManagerInterface networkManagerInterface = new NetworkManagerInterface()
             {
                 @Override
-                public void onSuccess(int responseCode, String networkResponse)
+                public void onSuccess(HttpResponseCode httpCode, String networkResponse)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append("========= Time =========");
@@ -192,7 +193,7 @@ public class MainActivity extends AppCompatActivity
                     stringBuilder.append("\n");
                     stringBuilder.append("========= Response =========");
                     stringBuilder.append("\n");
-                    stringBuilder.append("Response Code:\t\t" + responseCode);
+                    stringBuilder.append("Response Code:\t\t" + httpCode);
                     stringBuilder.append("\n");
                     stringBuilder.append("Response:\t\t" + networkResponse);
 
@@ -204,7 +205,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 @Override
-                public void onFailure(int responseCode, String networkResponse) {
+                public void onFailure(HttpResponseCode httpCode, String networkResponse) {
                     Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.i(TAG + "<Failure>", networkResponse);
                 }
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity
                     (
                     networkManagerInterface,
                     URL_POST,
-                    NetworkConstants.NETWORK_METHORD_POST,
+                    NetworkHttpMethods.POST,
                     params,
                     headerParams
                     );
@@ -266,6 +267,89 @@ public class MainActivity extends AppCompatActivity
 //                "  \"imei\": \"862037029044152\"\n" +
 //                "}");
 
+        String dataToSendRaw = "{" +
+                "\"plot_unique_id\":\"355618\"," +
+                "\"plot_physical_address\":\"owner\"," +
+                "\"plot_id\":\"355617\"," +
+                "\"location\":\"31.475885,74.3422574\"," +
+                "\"action_type\":\"1\"," +
+                "\"plot_sub_id\":\"1\"," +
+                "\"apk_version\":\"1.0\"," +
+                "\"imei_no\":\"862037029044152\"," +
+                "\"owners\":[" +
+                "{" +
+                "\"name\":\"Owner\"," +
+                "\"cnic\":\"11111-1111111-1\"," +
+                "\"number\":\"11111111111\"," +
+                "\"father_name\":\"Father\"," +
+                "\"address\":\"Permanent\"" +
+                "}," +
+                "{" +
+                "\"name\":\"Owner+1\"," +
+                "\"cnic\":\"22222-2222222-2\"," +
+                "\"number\":\"22222222222\"," +
+                "\"father_name\":\"Father+1\"," +
+                "\"address\":\"Permanent\"" +
+                "}" +
+                "]," +
+                "\"servants\":[" +
+                "{" +
+                "\"name\":\"Nam\"," +
+                "\"cnic\":\"33333-3333333-3\"," +
+                "\"number\":\"\"," +
+                "\"father_name\":\"H\"," +
+                "\"address\":\"P\"" +
+                "}," +
+                "{" +
+                "\"name\":\"Nam\"," +
+                "\"cnic\":\"65656-5656565-6\"," +
+                "\"number\":\"\"," +
+                "\"father_name\":\"H\"," +
+                "\"address\":\"Hdhdhd\"" +
+                "}" +
+                "]," +
+                "\"families\":[" +
+                "{" +
+                "\"name\":\"Raza\"," +
+                "\"cnic\":\"35201-9781615-5\"," +
+                "\"number\":\"00000000000\"," +
+                "\"family_relation\":\"Rel\"" +
+                "}," +
+                "{" +
+                "\"name\":\"Raza1\"," +
+                "\"cnic\":\"20000-0000000-0\"," +
+                "\"number\":\"02222222222\"," +
+                "\"family_relation\":\"R\"" +
+                "}" +
+                "]," +
+                "\"vehicles\":[" +
+                "{" +
+                "\"type\":\"Vzvzbdb\"," +
+                "\"reg_no\":\"Bdb-95-95959\"," +
+                "\"model_no\":\"Bddnnddn\"" +
+                "}," +
+                "{" +
+                "\"type\":\"Bsbsbsbssb\"," +
+                "\"reg_no\":\"Bsb-95-95959\"," +
+                "\"model_no\":\"Bsbsbsnsnsbs\"" +
+                "}" +
+                "]," +
+                "\"resident\":{" +
+                "\"name\":\"resident_name\"," +
+                "\"number\":\"22222222222\"," +
+                "\"cnic\":\"35201-9781615-5\"," +
+                "\"resident_agrement_from_date\":\"31-08-2016\"," +
+                "\"resident_agrement_to_date\":\"\"," +
+                "\"father_name\":\"resident+father+name\"," +
+                "\"floor_id\":\"7\"," +
+                "\"unit_id\":\"4\"," +
+                "\"address\":\"resident_address\"," +
+                "\"resident_type\":\"1\"," +
+                "\"is_closed\":\"no\"" +
+                "}," +
+                "\"imei\":\"862037029044152\"" +
+                "}";
+
         Map<String, String> headerParams = new HashMap<String, String>();
 
         try
@@ -273,7 +357,7 @@ public class MainActivity extends AppCompatActivity
             NetworkManagerInterface networkManagerInterface = new NetworkManagerInterface()
             {
                 @Override
-                public void onSuccess(int responseCode, String networkResponse)
+                public void onSuccess(HttpResponseCode httpCode, String networkResponse)
                 {
                     StringBuilder builder = new StringBuilder();
                     StringBuilder stringBuilder = new StringBuilder();
@@ -284,32 +368,52 @@ public class MainActivity extends AppCompatActivity
                     stringBuilder.append("\n");
                     stringBuilder.append("========= Response =========");
                     stringBuilder.append("\n");
-                    stringBuilder.append("Response Code:\t\t" + responseCode);
+                    stringBuilder.append("Response Code:\t\t" + httpCode);
                     stringBuilder.append("\n");
                     stringBuilder.append("Response:\t\t" + networkResponse);
 
                     TextView tvStatus = (TextView) findViewById(R.id.txtStatus);
                     tvStatus.setText(stringBuilder.toString());
 
-//                    Toast.makeText(getApplicationContext(), "Success : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.i(TAG + "<Success>", networkResponse);
                 }
 
                 @Override
-                public void onFailure(int responseCode, String networkResponse) {
+                public void onFailure(HttpResponseCode httpCode, String networkResponse)
+                {
                     Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.i(TAG + "<Failure>", networkResponse);
                 }
             };
 
-            NetworkRequestManagment.mNetManager.networkSubmitRequest
-            (
-                networkManagerInterface,
-                URL_POLICE_EXCISE,
-                NetworkConstants.NETWORK_METHORD_POST,
-                params,
-                headerParams
-            );
+            boolean isUseRaw = true;
+
+            if(isUseRaw)
+            {
+                headerParams.put("Accept", "application/json");
+                headerParams.put("Content-Type", "application/json");
+                NetworkRequestManagment.mNetManager.SubmitNetworkRequest
+                (
+                    networkManagerInterface,
+                    URL_POLICE_EXCISE,
+                    NetworkHttpMethods.POST,
+                    dataToSendRaw,
+                    headerParams
+                );
+            }
+            else
+            {
+                headerParams.put("Accept", "application/json");
+                headerParams.put("Content-Type", "application/json");
+                NetworkRequestManagment.mNetManager.networkSubmitRequest
+                (
+                    networkManagerInterface,
+                    URL_POLICE_EXCISE,
+                    NetworkHttpMethods.POST,
+                    params,
+                    headerParams
+                );
+            }
         }
         catch (IOException e) {
             e.printStackTrace();

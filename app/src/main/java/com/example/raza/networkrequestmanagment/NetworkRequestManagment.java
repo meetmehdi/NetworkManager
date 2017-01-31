@@ -14,6 +14,7 @@ public class NetworkRequestManagment extends Application {
     public static NetworkManager mNetManager;
     public static Context mContext;
 
+
     @Override
     public void onCreate()
     {
@@ -22,8 +23,8 @@ public class NetworkRequestManagment extends Application {
         mContext = getApplicationContext();
 
         NetworkConfig networkConfig = new NetworkConfig();
-        networkConfig.setTimeout(3000);
-        networkConfig.setRetryCount(3);
+        networkConfig.setTimeout(30000); // 30sec (read request timeout, connection time out)
+        networkConfig.setRetryCount(3); // 3
 
 //        mNetManager = NetworkManager.getInstance(mContext, NetworkManager.REQUEST_TIMEOUT, NetworkManager.RETRY_COUNT);
         mNetManager = NetworkManager.getInstance(mContext, networkConfig);
