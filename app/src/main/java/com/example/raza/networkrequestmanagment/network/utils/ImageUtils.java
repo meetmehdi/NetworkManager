@@ -20,8 +20,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
-import com.example.raza.networkrequestmanagment.network.activity.TagActivity;
-import com.example.raza.networkrequestmanagment.network.activity.TagActivityClean;
+import com.example.raza.networkrequestmanagment.activity.TagActivity;
+import com.example.raza.networkrequestmanagment.activity.TagActivityClean;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

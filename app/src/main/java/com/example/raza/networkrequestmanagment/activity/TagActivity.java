@@ -1,4 +1,4 @@
-package com.example.raza.networkrequestmanagment.network.activity;
+package com.example.raza.networkrequestmanagment.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.raza.networkrequestmanagment.BuildConfig;
 import com.example.raza.networkrequestmanagment.NetworkRequestManagment;
 import com.example.raza.networkrequestmanagment.R;
 import com.example.raza.networkrequestmanagment.network.constants.NetworkConstants;
@@ -27,7 +28,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TagActivityClean extends AppCompatActivity {
+public class TagActivity extends AppCompatActivity {
 
     private static final String TAG = AppCompatActivity.class.getSimpleName();
 
@@ -35,7 +36,7 @@ public class TagActivityClean extends AppCompatActivity {
 
     public static String ipAddress = "your_own_url";
     private static String baseURL = "your_own_url";
-    public static final String URL_CLEAN = "your_own_url";
+    public static final String URL_TAG_SCHOOL = baseURL + "your_own_url";
     public static String filePath;
 
     ImageView imageView;
@@ -152,35 +153,32 @@ public class TagActivityClean extends AppCompatActivity {
 
     private void postData() {
         RequestParamsMultipart mRequestParams = new RequestParamsMultipart();
-        mRequestParams.getmParameters().add(new APIParameter("categories","Dump Site"));
-        mRequestParams.getmParameters().add(new APIParameter("zone",""));
-        mRequestParams.getmParameters().add(new APIParameter("uc_no",""));
-        mRequestParams.getmParameters().add(new APIParameter("town_name",""));
-        mRequestParams.getmParameters().add(new APIParameter("place",""));
-        mRequestParams.getmParameters().add(new APIParameter("gps_location","23,23"));
-        mRequestParams.getmParameters().add(new APIParameter("imei_number","864390020062790"));
-        mRequestParams.getmParameters().add(new APIParameter("description",""));
-        mRequestParams.getmParameters().add(new APIParameter("in_or_out",""));
+        mRequestParams.getmParameters().add(new APIParameter("school_emis_code","35210009"));
+        mRequestParams.getmParameters().add(new APIParameter("latitude","31.4758216"));
+        mRequestParams.getmParameters().add(new APIParameter("longitude","74.3422837"));
+        mRequestParams.getmParameters().add(new APIParameter("mea_id","1243"));
+        mRequestParams.getmParameters().add(new APIParameter("sec_key","pitbasdf12345"));
+        mRequestParams.getmParameters().add(new APIParameter("source","gps"));
+        mRequestParams.getmParameters().add(new APIParameter("accuracy","70"));
+        mRequestParams.getmParameters().add(new APIParameter("date_time",getCurrentTimeStamp()));
+        mRequestParams.getmParameters().add(new APIParameter("app_version",BuildConfig.VERSION_NAME));
 
 //        Map<String, String> params = new HashMap<>();
-//        params.put("categories", "Dump Site");
-//        params.put("zone", "");
-//        params.put("uc_no", "");
-//        params.put("town_name", "");
-//        params.put("place", "   ");
-//        params.put("gps_location", "23,23");
-//        params.put("imei_number", "864390020062790");
-//        params.put("description", "");
-//        params.put("in_or_out", "");
+//        params.put("school_emis_code", "35210009");
+//        params.put("latitude", "31.4758216");
+//        params.put("longitude", "74.3422837");
+//        params.put("mea_id", "1243");
+//        params.put("sec_key", "pitbasdf12345");
+//        params.put("source", "gps");
+//        params.put("accuracy", "70");
+//        params.put("date_time", getCurrentTimeStamp());
+//        params.put("app_version", BuildConfig.VERSION_NAME);
 
-//      params.put("school_image", new DataPart(filePath, pic1, "image/jpeg"));
-
+//        params.put("school_image", new DataPart(filePath, pic1, "image/jpeg"));
 //        Map<String, String> files = new HashMap<>();
-//        files.put("before_picture", filePath);
-//        files.put("after_picture", filePath);
+//        files.put("school_image", filePath);
 
-        mRequestParams.getmFileParameters().add(new APIFileParameter("before_picture",filePath));
-        mRequestParams.getmFileParameters().add(new APIFileParameter("after_picture",filePath));
+        mRequestParams.getmFileParameters().add(new APIFileParameter("school_image",filePath));
 
         try {
             NetworkRequestManagment.mNetManager.networkMultipartRequest(new NetworkManagerInterface() {
@@ -191,11 +189,11 @@ public class TagActivityClean extends AppCompatActivity {
 
                 @Override
                 public void onFailure(String networkResponse) {
-                    Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
+//                  Toast.makeText(getApplicationContext(), "Failure : " + networkResponse, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Failure : " + networkResponse);
 
                 }
-            }, URL_CLEAN, NetworkConstants.NETWORK_METHORD_POST, mRequestParams, null, "UTF-8");
+            }, URL_TAG_SCHOOL, NetworkConstants.NETWORK_METHORD_POST, mRequestParams, null, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }

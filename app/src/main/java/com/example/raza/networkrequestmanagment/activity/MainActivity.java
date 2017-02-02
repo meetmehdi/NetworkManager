@@ -1,4 +1,4 @@
-package com.example.raza.networkrequestmanagment.network.activity;
+package com.example.raza.networkrequestmanagment.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
